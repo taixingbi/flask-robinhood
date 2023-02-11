@@ -2,7 +2,7 @@ import json
 from flask import Flask
 from flask import make_response
 
-from robin.robintrade import robintrade
+from robin.robintrade import *
 
 def jsonify(status=200, indent=4, sort_keys=True, **kwargs):
     response = make_response(json.dumps(dict(**kwargs), indent=indent, sort_keys=sort_keys))
@@ -14,10 +14,11 @@ def jsonify(status=200, indent=4, sort_keys=True, **kwargs):
 app = Flask(__name__)
 @app.route('/<symbol>/<quantity>/<key>')
 def index(symbol, quantity, key):
-    print("------------------",symbol, quantity, quantity)
-    Robintrade = robintrade(symbol, int(quantity), str(key))
-    Robintrade.cancelAllOrders()
-    rs = Robintrade.straddle(order = True)
+    print(symbol, quantity, key)
+    if key == "cancel": 
+        cancelAllOrders()
+        return 'all pending orders are canceled'
+    rs = robintrade(symbol, int(quantity), str(key)).straddle(order = True)
     return jsonify(indent=2, sort_keys=False, flask_response=rs)
 
 if __name__ == '__main__':

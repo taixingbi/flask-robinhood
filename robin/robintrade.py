@@ -30,8 +30,9 @@ class robintrade:
 
     def getTomorrowDate(self):
         # return "2023-02-10"
-        tk = yf.Ticker("SPY")
+        tk = yf.Ticker(self.symbol)
         exps = tk.options
+        print(exps)
         return exps[1]
 
     def getCurrentPrice(self):
@@ -41,6 +42,7 @@ class robintrade:
         return price
 
     def getBestDebit(self, optionType):
+        # print(self.symbol, self.expirationDate,self.strike, optionType)
         best_bid = rs.options.find_options_by_expiration_and_strike(self.symbol,
                                                  self.expirationDate,
                                                  self.strike,
@@ -55,7 +57,7 @@ class robintrade:
         best_debit = float((best_bid + best_ask)/2)
         best_debit = ceil(best_debit * 100) / 100.0
         print(self.symbol, self.expirationDate, optionType, best_debit, "(",best_bid,best_ask,")")
-        dic_debit = {"symbol": "SPY", "symbol": self.symbol,  "expirationDate": self.expirationDate, "optionType": optionType, "best_debit": best_debit, "best_bid": best_bid, "best_ask": best_ask} 
+        dic_debit = {"symbol": "SPY", "symbol": self.symbol,  "strike": self.strike, "expirationDate": self.expirationDate, "optionType": optionType, "best_debit": best_debit, "best_bid": best_bid, "best_ask": best_ask} 
         return dic_debit
 
     def order(self, optionType):
@@ -79,16 +81,17 @@ class robintrade:
             order_call_robinhood = self.order("call")
             order_put_robinhood =  self.order("put")
         # print(self.symbol, self.expirationDate, "$"+str(self.strike), "$"+str(round(self.call_debit + self.put_debit,2)))
-        debit = "$"+str(round(self.call_debit["best_debit"] + self.put_debit["best_debit"],2))
-        summary = {"symbol": self.symbol, "type": "straddle", "expirationDate": self.expirationDate, "debit": debit, "estTime": self.ESTTime}
+        debit = round(self.call_debit["best_debit"] + self.put_debit["best_debit"],2)
+        summary = {"symbol": self.symbol, "type": "straddle", "strike": self.strike, "expirationDate": self.expirationDate, "debit": debit, "estTime": self.ESTTime}
         response = {"summary": summary , "call_debit": self.call_debit, "put_debit": self.put_debit, "order_call_robinhood": order_call_robinhood, "order_put_robinhood": order_put_robinhood}
         print(response)
         return response
 
-    def cancelAllOrders(self):
-        rs.orders.cancel_all_option_orders()
+def cancelAllOrders():
+    rs.orders.cancel_all_option_orders()
 
 if __name__ == '__main__':
-    robintrade(quantity=1).straddle(order = False)
+    robintrade("soxs", 1, "key")
+
 
 
