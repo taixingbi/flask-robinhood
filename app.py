@@ -12,18 +12,13 @@ def jsonify(status=200, indent=4, sort_keys=True, **kwargs):
     return response
 
 app = Flask(__name__)
-@app.route('/')
-def index():
-
-    Robintrade = robintrade(quantity=1)
+@app.route('/<symbol>/<quantity>/<key>')
+def index(symbol, quantity, key):
+    print("------------------",symbol, quantity, quantity)
+    Robintrade = robintrade(symbol, int(quantity), str(key))
     Robintrade.cancelAllOrders()
     rs = Robintrade.straddle(order = True)
     return jsonify(indent=2, sort_keys=False, flask_response=rs)
-
-    return json.dumps(rs, indent=2)
-    return json.dumps({'name': 'robinhood',
-                       'key': 'straddle'})
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

@@ -11,10 +11,12 @@ except:
 rs = rbCredential().login()
 
 class robintrade:
-    def __init__(self, quantity, symbol = "SPY"):
+    def __init__(self, symbol, quantity, key):
         print("robintrade init")
         self.ESTTime = self.ESTTime()
+        self.symbol = symbol
         self.quantity = quantity
+        self.key = key
         self.symbol = symbol
         self.strike = self.getCurrentPrice()
         self.expirationDate = self.getTomorrowDate()
@@ -73,7 +75,7 @@ class robintrade:
 
     def straddle(self, order):
         order_call_robinhood, order_put_robinhood = None, None
-        if order == True:  
+        if self.key == "abcd":  
             order_call_robinhood = self.order("call")
             order_put_robinhood =  self.order("put")
         # print(self.symbol, self.expirationDate, "$"+str(self.strike), "$"+str(round(self.call_debit + self.put_debit,2)))
