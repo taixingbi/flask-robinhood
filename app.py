@@ -9,7 +9,8 @@ def index():
     rs = rbCredential().login()
     return json.dumps({'name': 'robinhood',
                        'key': 'straddle'})
-                       
-app.run(host="localhost", port=8000, debug=True)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
 
 
